@@ -2,10 +2,10 @@ version: '3.8'
 services:
   # Service Backend (Golang) - Milik Payad
   backend:
-    image: 
-    container_name: chatbot-backend
+    image: muhammadalfayyadh/server
+    container_name: chatbot-server
     environment:
-      - GEMINI_API_KEY=
+      - GEMINI_API_KEY=AIzaSyBScRrn0BvsSRZsdOGFNNft1YfI_28fCL8
       - GIN_MODE=release
     ports:
       - "8080:8080"
