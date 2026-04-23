@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Chat UI</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background: #0f172a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .chat-container {
+      width: 400px;
+      height: 600px;
+      background: #1e293b;
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .chat-header {
+      background: #0f172a;
+      padding: 15px;
+      text-align: center;
+      color: #38bdf8;
+      font-weight: bold;
+      border-bottom: 1px solid #334155;
+    }
+
+    .chat-box {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+    }
+
+    .message {
+      margin-bottom: 10px;
+      max-width: 75%;
+      padding: 10px 15px;
+      border-radius: 15px;
+      line-height: 1.4;
+      font-size: 14px;
+    }
+
+    .user {
+      background: #38bdf8;
+      color: black;
+      margin-left: auto;
+      border-bottom-right-radius: 5px;
+    }
+
+    .ai {
+      background: #334155;
+      color: white;
+      margin-right: auto;
+      border-bottom-left-radius: 5px;
+    }
+
+    .chat-input {
+      display: flex;
+      border-top: 1px solid #334155;
+      padding: 10px;
+      background: #0f172a;
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 10px;
+      outline: none;
+      background: #1e293b;
+      color: white;
+    }
+
+    .chat-input button {
+      margin-left: 10px;
+      padding: 10px 15px;
+      border: none;
+      background: #38bdf8;
+      color: black;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .chat-input button:hover {
+      background: #0ea5e9;
+    }
+  </style>
+</head>
+<body>
+
+<div class="chat-container">
+  <div class="chat-header">AI Chat</div>
+
+  <div class="chat-box" id="chatBox">
+    <div class="message ai">Halo! Saya AI, ada yang bisa saya bantu?</div>
+  </div>
+
+  <div class="chat-input">
+    <input type="text" id="userInput" placeholder="Ketik pesan...">
+    <button onclick="sendMessage()">Kirim</button>
+  </div>
+</div>
+
+<script>
+  function sendMessage() {
+    const input = document.getElementById("userInput");
+    const chatBox = document.getElementById("chatBox");
+
+    if (input.value.trim() === "") return;
+
+    // Pesan user
+    const userMsg = document.createElement("div");
+    userMsg.classList.add("message", "user");
+    userMsg.innerText = input.value;
+    chatBox.appendChild(userMsg);
+
+    // Simulasi AI
+    setTimeout(() => {
+      const aiMsg = document.createElement("div");
+      aiMsg.classList.add("message", "ai");
+      aiMsg.innerText = "AI sedang memproses: " + input.value;
+      chatBox.appendChild(aiMsg);
+
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }, 500);
+
+    input.value = "";
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+</script>
+
+</body>
+</html>

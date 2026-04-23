@@ -1,14 +1,31 @@
 version: '3.8'
-
 services:
-  server:
-    build: ./server
-    container_name: chatbot-server
+  # Service Backend (Golang) - Milik Payad
+  backend:
+    image: 
+    container_name: chatbot-backend
+    environment:
+      - GEMINI_API_KEY=
+      - GIN_MODE=release
     ports:
-      - "8081:8080"
+      - "8080:8080"
+    restart: always
+    networks:
+      - chatbot-network
 
-  client:
-    build: ./client
+  # Service Frontend (Nginx/Web) - Milik Kawan
+  frontend:
+    # GANTI 'akun_kawan' dengan username asli kawanmu di Docker Hub
+    image: muhammadnabilfadhila/chatbot-client
     container_name: chatbot-client
+    ports:
+      - "80:80"        # Akses via browser di http://localhost
     depends_on:
-      - server
+      - backend
+    restart: always
+    networks:
+      - chatbot-network
+
+networks:
+  chatbot-network:
+    driver: bridge
