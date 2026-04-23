@@ -1,8 +1,5 @@
-FROM golang:1.26-alpine
+FROM nginx:alpine
 
-WORKDIR /app
-COPY . .
+COPY . /usr/share/nginx/html
 
-RUN go build -o client
-
-CMD ["./client"]
+EXPOSE 80
