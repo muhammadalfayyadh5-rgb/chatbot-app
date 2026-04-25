@@ -4,7 +4,7 @@ services:
   # Service Backend (Golang) - Milik Payad
   backend:
     image: muhammadalfayyadh/chatbot-backend:v1
-    container_name: chatbot-server
+    container_name: chatbot-backend
     environment:
       # Mengambil nilai dari file .env secara otomatis
       - GEMINI_API_KEY=${GEMINI_API_KEY}
@@ -17,8 +17,8 @@ services:
 
   # Service Frontend (Nginx/Web) - Milik Kawan
   frontend:
-    image: muhammadnabilfadhila/chatbot-client
-    container_name: chatbot-client
+    image: muhammadnabilfadhila/chatbot-frontend:v1
+    container_name: chatbot-frontend
     ports:
       - "80:80"
     depends_on:
