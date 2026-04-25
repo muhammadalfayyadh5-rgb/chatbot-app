@@ -7,7 +7,7 @@ services:
     image: muhammadalfayyadh/chatbot-backend:v1
     container_name: chatbot-backend
     environment:
-      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - GEMINI_API_KEY= AIzaSyBP3BGRqqsP5wCxHYJFAfrMVKLEBfO7sH8
       - GIN_MODE=release
     ports:
       - "8080:8080"
