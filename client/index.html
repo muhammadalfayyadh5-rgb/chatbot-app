@@ -319,7 +319,7 @@
 
         try {
             // host.docker.internal digunakan agar Docker bisa akses localhost komputer host
-            const response = await fetch('http://host.docker.internal:8080', {
+            const response = await fetch('http://localhost:8080/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message: text })
