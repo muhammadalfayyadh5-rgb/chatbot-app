@@ -3,9 +3,12 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+	"log"
 	"net/http"
 	"os"
-	
+	"strings"
+
 	"google.golang.org/genai"
 )
 
@@ -14,37 +17,90 @@ type ChatRequest struct {
 }
 
 func chatHandler(w http.ResponseWriter, r *http.Request) {
-	// PENTING: Izinkan frontend temanmu mengakses API ini
+	// 1. CORS Headers
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	w.Header().Set("Content-Type", "application/json")
 
 	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusOK)
 		return
 	}
 
-	// Ambil input dari frontend
+	// 2. Decode Input
 	var req ChatRequest
-	json.NewDecoder(r.Body).Decode(&req)
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
 
+	// 3. Setup Gemini Client
 	apiKey := os.Getenv("GEMINI_API_KEY")
+	if apiKey == "" {
+		log.Println("Error: GEMINI_API_KEY is empty")
+		json.NewEncoder(w).Encode(map[string]string{"reply": "Server error: API Key is missing."})
+		return
+	}
+
 	ctx := context.Background()
 	client, err := genai.NewClient(ctx, &genai.ClientConfig{
 		APIKey: apiKey,
 	})
+	if err != nil {
+		log.Printf("Failed to create client: %v", err)
+		json.NewEncoder(w).Encode(map[string]string{"reply": "Gagal inisialisasi API."})
+		return
+	}
 
-	// Kirim pesan dari user ke Gemini
-	resp, err := client.Models.GenerateContent(ctx, "modeld/gemini2.5-flash-lite", genai.Text(req.Message), nil)
+	// ... (bagian atas tetap sama)
+
+	// 4. Generate Content 
+	// Coba gunakan prefix lengkap "models/" karena 404 biasanya karena jalur path yang salah
+	modelID := "models/gemini-1.5-flash" 
 	
-	botMessage := "Gagal mendapatkan respon."
-	if err == nil && len(resp.Candidates) > 0 {
-		botMessage = resp.Candidates[0].Content.Parts[0].Text
+	resp, err := client.Models.GenerateContent(ctx, modelID, genai.Text(req.Message), nil)
+	
+	if err != nil {
+		log.Printf("Gemini Error: %v", err)
+		
+		// JIKA MASIH 404, kita paksa pakai model paling dasar
+		modelID = "models/gemini-pro"
+		resp, err = client.Models.GenerateContent(ctx, modelID, genai.Text(req.Message), nil)
+		
+		if err != nil {
+			json.NewEncoder(w).Encode(map[string]string{
+				"reply": fmt.Sprintf("Waduh, Google bilang: %v. Coba cek apakah API Key kamu sudah benar-benar aktif di AI Studio?", err),
+			})
+			return
+		}
+	}
+
+// ... (bagian bawah tetap sama)
+
+	// 5. Parse Response dengan cara yang lebih aman
+	botMessage := "Gemini tidak memberikan jawaban."
+	if len(resp.Candidates) > 0 && resp.Candidates[0].Content != nil {
+		// Menggabungkan semua part teks (jika ada lebih dari satu)
+		var pieces []string
+		for _, part := range resp.Candidates[0].Content.Parts {
+			if part.Text != "" {
+				pieces = append(pieces, part.Text)
+			}
+		}
+		if len(pieces) > 0 {
+			botMessage = strings.Join(pieces, " ")
+		}
 	}
 
 	json.NewEncoder(w).Encode(map[string]string{"reply": botMessage})
 }
 
 func main() {
+	port := ":8080"
 	http.HandleFunc("/chat", chatHandler)
-	http.ListenAndServe(":8080", nil)
+	log.Printf("Backend chatbot aktif di port %s", port)
+	if err := http.ListenAndServe(port, nil); err != nil {
+		log.Fatal(err)
+	}
 }
