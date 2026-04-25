@@ -17,7 +17,7 @@ services:
 
   # Service Frontend (Nginx/Web) - Milik Kawan
   frontend:
-    image: muhammadnabilfadhila/chatbot-frontend:v1
+    image: muhammadnabilfadhila/chatbot-frontend:v1.0
     container_name: chatbot-frontend
     ports:
       - "80:80"

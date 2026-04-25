@@ -7,21 +7,21 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=Playfair+Display:wght@500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg:        #0a0a0f;
-            --surface:   #111118;
-            --surface2:  #16161f;
-            --surface3:  #1c1c28;
-            --border:    rgba(255,255,255,0.07);
-            --border2:   rgba(255,255,255,0.12);
-            --accent:    #7c6af7;
-            --accent2:   #a78bfa;
+            --bg: #0a0a0f;
+            --surface: #111118;
+            --surface2: #16161f;
+            --surface3: #1c1c28;
+            --border: rgba(255,255,255,0.07);
+            --border2: rgba(255,255,255,0.12);
+            --accent: #7c6af7;
+            --accent2: #a78bfa;
             --accent-glow: rgba(124,106,247,0.18);
-            --text:      #e8e8f0;
-            --text2:     #8a8a9a;
-            --text3:     #555566;
-            --user-bg:   #1e1b3a;
+            --text: #e8e8f0;
+            --text2: #8a8a9a;
+            --text3: #555566;
+            --user-bg: #1e1b3a;
             --user-border: rgba(124,106,247,0.25);
-            --radius:    16px;
+            --radius: 16px;
             --radius-sm: 10px;
         }
 
@@ -35,13 +35,9 @@
             overflow: hidden;
         }
 
-        /* ─── LAYOUT ────────────────────────────────── */
-        .app {
-            display: flex;
-            height: 100vh;
-        }
+        .app { display: flex; height: 100vh; }
 
-        /* ─── SIDEBAR ───────────────────────────────── */
+        /* SIDEBAR */
         .sidebar {
             width: 260px;
             flex-shrink: 0;
@@ -53,17 +49,6 @@
             gap: 8px;
             position: relative;
             overflow: hidden;
-        }
-
-        .sidebar::before {
-            content: '';
-            position: absolute;
-            top: -80px;
-            left: -80px;
-            width: 220px;
-            height: 220px;
-            background: radial-gradient(circle, rgba(124,106,247,0.12) 0%, transparent 70%);
-            pointer-events: none;
         }
 
         .brand {
@@ -91,7 +76,6 @@
             font-family: 'Playfair Display', serif;
             font-size: 18px;
             font-weight: 500;
-            letter-spacing: -0.3px;
             background: linear-gradient(135deg, #e8e8f0, #a78bfa);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -113,26 +97,12 @@
             cursor: pointer;
             transition: all 0.2s ease;
             width: 100%;
-            letter-spacing: 0.1px;
         }
 
         .new-chat-btn:hover {
             background: var(--accent-glow);
             border-color: rgba(124,106,247,0.4);
             color: var(--accent2);
-        }
-
-        .new-chat-btn .icon {
-            width: 22px;
-            height: 22px;
-            background: var(--accent-glow);
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            color: var(--accent2);
-            transition: background 0.2s;
         }
 
         .sidebar-section-label {
@@ -154,81 +124,18 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            border: 1px solid transparent;
         }
 
-        .history-item:hover {
-            background: var(--surface3);
-            color: var(--text);
-            border-color: var(--border);
-        }
+        .history-item:hover { background: var(--surface3); color: var(--text); }
+        .history-item.active { background: var(--accent-glow); color: var(--accent2); }
 
-        .history-item.active {
-            background: var(--accent-glow);
-            color: var(--accent2);
-            border-color: var(--user-border);
-        }
+        .sidebar-footer { margin-top: auto; border-top: 1px solid var(--border); padding-top: 14px; }
+        .user-info { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: var(--radius-sm); cursor: pointer; }
+        .user-avatar { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, #5436da, #7c6af7); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: white; }
 
-        .sidebar-footer {
-            margin-top: auto;
-            border-top: 1px solid var(--border);
-            padding-top: 14px;
-        }
+        /* MAIN CHAT */
+        .main { flex: 1; display: flex; flex-direction: column; min-width: 0; background: var(--bg); position: relative; }
 
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 10px;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .user-info:hover { background: var(--surface3); }
-
-        .user-avatar {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #5436da, #7c6af7);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            font-weight: 600;
-            color: white;
-            flex-shrink: 0;
-        }
-
-        .user-name { font-size: 13px; font-weight: 500; color: var(--text); }
-        .user-plan { font-size: 11px; color: var(--text3); margin-top: 1px; }
-
-        /* ─── MAIN CHAT ─────────────────────────────── */
-        .main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            min-width: 0;
-            background: var(--bg);
-            position: relative;
-        }
-
-        /* Subtle grid background */
-        .main::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background-image:
-                linear-gradient(var(--border) 1px, transparent 1px),
-                linear-gradient(90deg, var(--border) 1px, transparent 1px);
-            background-size: 40px 40px;
-            opacity: 0.5;
-            pointer-events: none;
-            mask-image: radial-gradient(ellipse at 50% 0%, rgba(0,0,0,0.4) 0%, transparent 70%);
-        }
-
-        /* ─── TOP BAR ───────────────────────────────── */
         .topbar {
             display: flex;
             align-items: center;
@@ -237,9 +144,7 @@
             border-bottom: 1px solid var(--border);
             background: rgba(10,10,15,0.8);
             backdrop-filter: blur(10px);
-            position: relative;
             z-index: 10;
-            flex-shrink: 0;
         }
 
         .model-selector {
@@ -250,482 +155,109 @@
             background: var(--surface2);
             border: 1px solid var(--border2);
             border-radius: 30px;
-            cursor: pointer;
             font-size: 13px;
-            font-weight: 500;
             color: var(--text);
-            transition: all 0.2s;
         }
 
-        .model-selector:hover { border-color: rgba(124,106,247,0.4); }
+        .model-dot { width: 7px; height: 7px; background: #4ade80; border-radius: 50%; box-shadow: 0 0 6px rgba(74,222,128,0.6); }
 
-        .model-dot {
-            width: 7px;
-            height: 7px;
-            background: #4ade80;
-            border-radius: 50%;
-            box-shadow: 0 0 6px rgba(74,222,128,0.6);
-        }
-
-        .topbar-actions { display: flex; gap: 8px; }
-
-        .icon-btn {
-            width: 34px;
-            height: 34px;
-            background: var(--surface2);
-            border: 1px solid var(--border);
-            border-radius: 9px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: var(--text2);
-            transition: all 0.2s;
-        }
-
-        .icon-btn:hover { background: var(--surface3); color: var(--text); border-color: var(--border2); }
-        .icon-btn svg { width: 15px; height: 15px; }
-
-        /* ─── CHAT MESSAGES ─────────────────────────── */
         .chat-box {
             flex: 1;
             overflow-y: auto;
             padding: 32px 0 180px;
             scroll-behavior: smooth;
-            position: relative;
-            z-index: 1;
         }
 
-        .chat-box::-webkit-scrollbar { width: 4px; }
-        .chat-box::-webkit-scrollbar-track { background: transparent; }
-        .chat-box::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 2px; }
+        .message-group { max-width: 720px; margin: 0 auto; padding: 0 24px; }
 
-        .message-group {
-            max-width: 720px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
+        .msg { display: flex; gap: 14px; margin-bottom: 24px; animation: msgIn 0.3s ease forwards; }
 
-        .msg {
-            display: flex;
-            gap: 14px;
-            margin-bottom: 6px;
-            animation: msgIn 0.3s ease forwards;
-        }
+        @keyframes msgIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-        @keyframes msgIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        .msg-avatar { width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+        .msg.bot .msg-avatar { background: linear-gradient(135deg, #7c6af7, #a78bfa); color: white; }
+        .msg.user .msg-avatar { background: linear-gradient(135deg, #3b2f8f, #5436da); color: white; }
 
-        .msg + .msg { margin-top: 24px; }
-
-        .msg-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 10px;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            font-weight: 700;
-            margin-top: 2px;
-        }
-
-        .msg.bot .msg-avatar {
-            background: linear-gradient(135deg, #7c6af7, #a78bfa);
-            color: white;
-        }
-
-        .msg.user .msg-avatar {
-            background: linear-gradient(135deg, #3b2f8f, #5436da);
-            color: rgba(255,255,255,0.85);
-        }
-
-        .msg-body { flex: 1; min-width: 0; }
-
-        .msg-meta {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 6px;
-        }
-
-        .msg-name {
-            font-size: 12.5px;
-            font-weight: 600;
-            color: var(--text2);
-        }
-
+        .msg-body { flex: 1; }
+        .msg-name { font-size: 12.5px; font-weight: 600; color: var(--text2); margin-right: 8px; }
         .msg.bot .msg-name { color: var(--accent2); }
+        .msg-time { font-size: 11px; color: var(--text3); }
+        .msg-bubble { font-size: 14.5px; line-height: 1.7; color: var(--text); margin-top: 4px; }
+        .msg.user .msg-bubble { background: var(--user-bg); border: 1px solid var(--user-border); border-radius: var(--radius); border-top-left-radius: 4px; padding: 12px 18px; display: inline-block; }
 
-        .msg-time {
-            font-size: 11px;
-            color: var(--text3);
-        }
-
-        .msg-bubble {
-            font-size: 14.5px;
-            line-height: 1.7;
-            color: var(--text);
-            word-wrap: break-word;
-        }
-
-        .msg.user .msg-bubble {
-            background: var(--user-bg);
-            border: 1px solid var(--user-border);
-            border-radius: var(--radius);
-            border-top-left-radius: 4px;
-            padding: 13px 18px;
-            display: inline-block;
-            max-width: 100%;
-        }
-
-        .msg.bot .msg-bubble {
-            padding: 4px 0;
-        }
-
-        /* Typing indicator */
-        .typing {
-            display: flex;
-            gap: 5px;
-            padding: 14px 18px;
-            background: var(--surface2);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            border-top-left-radius: 4px;
-            width: fit-content;
-        }
-
-        .typing span {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--accent2);
-            opacity: 0.4;
-            animation: pulse 1.2s infinite;
-        }
-
+        /* Typing Animation */
+        .typing { display: flex; gap: 5px; padding: 12px 18px; background: var(--surface2); border-radius: var(--radius); width: fit-content; }
+        .typing span { width: 6px; height: 6px; background: var(--accent2); border-radius: 50%; animation: pulse 1.2s infinite; opacity: 0.4; }
         .typing span:nth-child(2) { animation-delay: 0.2s; }
         .typing span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes pulse { 0%, 60%, 100% { opacity: 0.4; transform: scale(1); } 30% { opacity: 1; transform: scale(1.3); } }
 
-        @keyframes pulse {
-            0%, 60%, 100% { opacity: 0.4; transform: scale(1); }
-            30% { opacity: 1; transform: scale(1.3); }
-        }
+        /* INPUT AREA */
+        .input-area { position: absolute; bottom: 0; left: 0; right: 0; padding: 16px 24px 24px; background: linear-gradient(to top, var(--bg) 70%, transparent); }
+        .input-container { max-width: 720px; margin: 0 auto; }
+        .input-box { display: flex; align-items: flex-end; gap: 10px; background: var(--surface2); border: 1px solid var(--border2); border-radius: 18px; padding: 12px 18px; }
+        .input-box textarea { flex: 1; background: transparent; border: none; color: var(--text); font-family: inherit; font-size: 14.5px; outline: none; resize: none; max-height: 140px; }
+        .send-btn { width: 36px; height: 36px; background: linear-gradient(135deg, #7c6af7, #a78bfa); border: none; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .send-btn:hover { transform: scale(1.05); }
+        .send-btn svg { width: 16px; height: 16px; fill: white; }
 
-        /* Welcome state */
-        .welcome {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 60px 24px;
-            text-align: center;
-            animation: msgIn 0.5s ease;
-        }
-
-        .welcome-glow {
-            width: 64px;
-            height: 64px;
-            background: linear-gradient(135deg, #7c6af7, #a78bfa);
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 24px;
-            box-shadow: 0 0 40px rgba(124,106,247,0.35);
-        }
-
-        .welcome-glow svg { width: 30px; height: 30px; fill: white; }
-
-        .welcome h2 {
-            font-family: 'Playfair Display', serif;
-            font-size: 28px;
-            font-weight: 500;
-            background: linear-gradient(135deg, #e8e8f0 30%, #a78bfa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 10px;
-        }
-
-        .welcome p {
-            font-size: 14.5px;
-            color: var(--text2);
-            max-width: 380px;
-            line-height: 1.6;
-            margin-bottom: 36px;
-        }
-
-        .suggestions {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            max-width: 480px;
-            width: 100%;
-        }
-
-        .sug-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 14px 16px;
-            text-align: left;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .sug-card:hover {
-            background: var(--surface3);
-            border-color: rgba(124,106,247,0.3);
-            transform: translateY(-1px);
-        }
-
-        .sug-card .sug-icon {
-            font-size: 20px;
-            margin-bottom: 8px;
-            display: block;
-        }
-
-        .sug-card .sug-title {
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text);
-            margin-bottom: 3px;
-        }
-
-        .sug-card .sug-sub {
-            font-size: 11.5px;
-            color: var(--text3);
-        }
-
-        /* ─── INPUT AREA ────────────────────────────── */
-        .input-area {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 16px 24px 24px;
-            background: linear-gradient(to top, var(--bg) 70%, transparent);
-            z-index: 20;
-        }
-
-        .input-container {
-            max-width: 720px;
-            margin: 0 auto;
-        }
-
-        .input-box {
-            display: flex;
-            align-items: flex-end;
-            gap: 10px;
-            background: var(--surface2);
-            border: 1px solid var(--border2);
-            border-radius: 18px;
-            padding: 12px 12px 12px 18px;
-            box-shadow: 0 0 0 1px rgba(124,106,247,0);
-            transition: all 0.2s ease;
-        }
-
-        .input-box:focus-within {
-            border-color: rgba(124,106,247,0.5);
-            box-shadow: 0 0 0 4px rgba(124,106,247,0.08);
-        }
-
-        .input-box textarea {
-            flex: 1;
-            background: transparent;
-            border: none;
-            color: var(--text);
-            font-family: 'DM Sans', sans-serif;
-            font-size: 14.5px;
-            line-height: 1.5;
-            outline: none;
-            resize: none;
-            min-height: 24px;
-            max-height: 140px;
-            overflow-y: auto;
-            padding: 0;
-        }
-
-        .input-box textarea::placeholder { color: var(--text3); }
-
-        .input-box textarea::-webkit-scrollbar { width: 3px; }
-        .input-box textarea::-webkit-scrollbar-thumb { background: var(--surface3); }
-
-        .input-actions {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            flex-shrink: 0;
-        }
-
-        .attach-btn {
-            width: 36px;
-            height: 36px;
-            background: transparent;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: var(--text3);
-            transition: all 0.2s;
-        }
-
-        .attach-btn:hover { background: var(--surface3); color: var(--text2); border-color: var(--border2); }
-        .attach-btn svg { width: 15px; height: 15px; }
-
-        .send-btn {
-            width: 36px;
-            height: 36px;
-            background: linear-gradient(135deg, #7c6af7, #a78bfa);
-            border: none;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 12px rgba(124,106,247,0.35);
-        }
-
-        .send-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 20px rgba(124,106,247,0.5);
-        }
-
-        .send-btn:active { transform: scale(0.97); }
-        .send-btn svg { width: 15px; height: 15px; fill: white; }
-
-        .input-footer {
-            text-align: center;
-            margin-top: 8px;
-            font-size: 11px;
-            color: var(--text3);
-        }
-
-        /* ─── RESPONSIVE ────────────────────────────── */
-        @media (max-width: 768px) {
-            .sidebar { display: none; }
-            .message-group { padding: 0 16px; }
-            .input-area { padding: 12px 16px 20px; }
-        }
+        .welcome { text-align: center; padding: 60px 20px; }
+        .welcome h2 { font-family: 'Playfair Display', serif; font-size: 28px; margin-bottom: 10px; }
+        .welcome p { color: var(--text2); margin-bottom: 30px; }
+        .suggestions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 500px; margin: 0 auto; }
+        .sug-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 15px; cursor: pointer; text-align: left; transition: 0.2s; }
+        .sug-card:hover { background: var(--surface3); border-color: var(--accent); }
     </style>
 </head>
 <body>
 
 <div class="app">
-    <!-- Sidebar -->
     <aside class="sidebar">
         <div class="brand">
-            <div class="brand-icon">
-                <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-            </div>
+            <div class="brand-icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
             <span class="brand-name">Nova AI</span>
         </div>
-
-        <button class="new-chat-btn" onclick="newChat()">
-            <span class="icon">＋</span>
-            Percakapan Baru
+        <button class="new-chat-btn" onclick="location.reload()">
+            <span>＋</span> Percakapan Baru
         </button>
-
         <div class="sidebar-section-label">Terkini</div>
-
         <div class="history-item active">Halo! Ada yang bisa saya bantu?</div>
-        <div class="history-item">Tips belajar pemrograman</div>
-        <div class="history-item">Resep masakan Indonesia</div>
-        <div class="history-item">Cara deploy aplikasi web</div>
-
         <div class="sidebar-footer">
             <div class="user-info">
                 <div class="user-avatar">U</div>
-                <div>
-                    <div class="user-name">Pengguna</div>
-                    <div class="user-plan">Free Plan</div>
-                </div>
+                <div class="user-name">Pengguna <br><small style="color:var(--text3)">Free Plan</small></div>
             </div>
         </div>
     </aside>
 
-    <!-- Main -->
     <main class="main">
-        <!-- Top bar -->
         <div class="topbar">
-            <div class="model-selector">
-                <span class="model-dot"></span>
-                Nova 1.5 Pro
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-            </div>
-            <div class="topbar-actions">
-                <button class="icon-btn" title="Bagikan">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-                </button>
-                <button class="icon-btn" title="Pengaturan">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                </button>
-            </div>
+            <div class="model-selector"><span class="model-dot"></span> Nova 1.5 Pro</div>
         </div>
 
-        <!-- Chat -->
         <div id="chat-box" class="chat-box">
-            <div class="message-group">
+            <div class="message-group" id="message-group">
                 <div class="welcome" id="welcome">
-                    <div class="welcome-glow">
-                        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-                    </div>
                     <h2>Selamat datang di Nova AI</h2>
-                    <p>Asisten AI cerdas yang siap membantu Anda dalam berbagai tugas. Mulai percakapan sekarang.</p>
+                    <p>Mulai percakapan cerdas Anda hari ini.</p>
                     <div class="suggestions">
-                        <div class="sug-card" onclick="useSuggestion('Jelaskan cara kerja machine learning')">
-                            <span class="sug-icon">🤖</span>
-                            <div class="sug-title">Machine Learning</div>
-                            <div class="sug-sub">Jelaskan konsep dasar ML</div>
+                        <div class="sug-card" onclick="useSuggestion('Jelaskan cara kerja Docker')">
+                            <b>Docker</b><br><small>Cara kerja container</small>
                         </div>
-                        <div class="sug-card" onclick="useSuggestion('Bantu saya membuat rencana belajar pemrograman')">
-                            <span class="sug-icon">💻</span>
-                            <div class="sug-title">Rencana Belajar</div>
-                            <div class="sug-sub">Buat roadmap programming</div>
-                        </div>
-                        <div class="sug-card" onclick="useSuggestion('Rekomendasikan resep masakan sehat dan mudah')">
-                            <span class="sug-icon">🍳</span>
-                            <div class="sug-title">Ide Masakan</div>
-                            <div class="sug-sub">Resep sehat dan praktis</div>
-                        </div>
-                        <div class="sug-card" onclick="useSuggestion('Bagaimana cara meningkatkan produktivitas kerja?')">
-                            <span class="sug-icon">⚡</span>
-                            <div class="sug-title">Produktivitas</div>
-                            <div class="sug-sub">Tips kerja lebih efektif</div>
+                        <div class="sug-card" onclick="useSuggestion('Tips belajar JavaScript')">
+                            <b>Programming</b><br><small>Belajar JS efektif</small>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Input -->
         <div class="input-area">
             <div class="input-container">
                 <div class="input-box">
-                    <textarea
-                        id="message"
-                        placeholder="Kirim pesan ke Nova..."
-                        rows="1"
-                        onkeydown="handleKey(event)"
-                        oninput="autoResize(this)"
-                    ></textarea>
-                    <div class="input-actions">
-                        <button class="attach-btn" title="Lampirkan file">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
-                        </button>
-                        <button class="send-btn" onclick="sendMessage()" title="Kirim">
-                            <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                        </button>
-                    </div>
+                    <textarea id="message" placeholder="Kirim pesan ke Nova..." rows="1" onkeydown="handleKey(event)"></textarea>
+                    <button class="send-btn" onclick="sendMessage()"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
                 </div>
-                <div class="input-footer">Nova AI dapat membuat kesalahan. Periksa informasi penting.</div>
             </div>
         </div>
     </main>
@@ -733,83 +265,48 @@
 
 <script>
     const chatBox = document.getElementById('chat-box');
+    const msgGroup = document.getElementById('message-group');
     const msgInput = document.getElementById('message');
-    let msgCount = 0;
 
-    function getTime() {
-        return new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-    }
-
-    function removeWelcome() {
-        const w = document.getElementById('welcome');
-        if (w) w.remove();
-    }
+    function getTime() { return new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }); }
 
     function addMessage(text, role) {
-        removeWelcome();
-        msgCount++;
+        const welcome = document.getElementById('welcome');
+        if (welcome) welcome.remove();
 
-        const group = chatBox.querySelector('.message-group');
-        const msg = document.createElement('div');
-        msg.className = `msg ${role}`;
-        msg.style.marginTop = msgCount > 1 ? '24px' : '0';
-
-        const initials = role === 'user' ? 'U' : 'AI';
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `msg ${role}`;
+        
         const name = role === 'user' ? 'Anda' : 'Nova AI';
+        const avatar = role === 'user' ? 'U' : 'AI';
 
-        msg.innerHTML = `
-            <div class="msg-avatar">${initials}</div>
+        msgDiv.innerHTML = `
+            <div class="msg-avatar">${avatar}</div>
             <div class="msg-body">
                 <div class="msg-meta">
                     <span class="msg-name">${name}</span>
                     <span class="msg-time">${getTime()}</span>
                 </div>
-                <div class="msg-bubble">${escapeHtml(text)}</div>
+                <div class="msg-bubble">${text}</div>
             </div>
         `;
-
-        group.appendChild(msg);
-        scrollBottom();
-        return msg;
+        msgGroup.appendChild(msgDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
     }
 
     function addTyping() {
-        removeWelcome();
-        const group = chatBox.querySelector('.message-group');
-        const typing = document.createElement('div');
-        typing.className = 'msg bot';
-        typing.id = 'typing-indicator';
-        typing.style.marginTop = '24px';
-        typing.innerHTML = `
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'msg bot';
+        typingDiv.id = 'typing';
+        typingDiv.innerHTML = `
             <div class="msg-avatar">AI</div>
             <div class="msg-body">
-                <div class="msg-meta">
-                    <span class="msg-name" style="color:var(--accent2)">Nova AI</span>
-                    <span class="msg-time">${getTime()}</span>
-                </div>
-                <div class="typing">
-                    <span></span><span></span><span></span>
-                </div>
+                <div class="typing"><span></span><span></span><span></span></div>
             </div>
         `;
-        group.appendChild(typing);
-        scrollBottom();
-        return typing;
-    }
-
-    function removeTyping() {
-        const t = document.getElementById('typing-indicator');
-        if (t) t.remove();
-    }
-
-    function scrollBottom() {
-        chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
-    }
-
-    function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.appendChild(document.createTextNode(text));
-        return div.innerHTML;
+        msgGroup.appendChild(typingDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
+        return typingDiv;
     }
 
     async function sendMessage() {
@@ -818,77 +315,29 @@
 
         addMessage(text, 'user');
         msgInput.value = '';
-        autoResize(msgInput);
-
         const typing = addTyping();
 
         try {
-            const res = await fetch('http://localhost:8080/chat', {
+            // host.docker.internal digunakan agar Docker bisa akses localhost komputer host
+            const response = await fetch('http://host.docker.internal:8080/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message: text })
             });
-            const data = await res.json();
-            removeTyping();
-            addMessage(data.reply, 'bot');
-        } catch {
-            removeTyping();
-            addMessage('Maaf, tidak dapat terhubung ke server. Silakan coba lagi.', 'bot');
+
+            const data = await response.json();
+            typing.remove();
+            addMessage(data.reply || data.message, 'bot');
+        } catch (error) {
+            typing.remove();
+            addMessage("Gagal terhubung ke server. Pastikan Backend menyala di port 8080.", "bot");
+            console.error("Error:", error);
         }
     }
 
-    function handleKey(e) {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            sendMessage();
-        }
-    }
-
-    function autoResize(el) {
-        el.style.height = 'auto';
-        el.style.height = Math.min(el.scrollHeight, 140) + 'px';
-    }
-
-    function useSuggestion(text) {
-        msgInput.value = text;
-        autoResize(msgInput);
-        msgInput.focus();
-    }
-
-    function newChat() {
-        chatBox.querySelector('.message-group').innerHTML = `
-            <div class="welcome" id="welcome">
-                <div class="welcome-glow">
-                    <svg viewBox="0 0 24 24" fill="white"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-                </div>
-                <h2>Percakapan Baru</h2>
-                <p>Mulai percakapan baru dengan Nova AI. Apa yang ingin Anda bahas?</p>
-                <div class="suggestions">
-                    <div class="sug-card" onclick="useSuggestion('Jelaskan cara kerja machine learning')">
-                        <span class="sug-icon">🤖</span>
-                        <div class="sug-title">Machine Learning</div>
-                        <div class="sug-sub">Jelaskan konsep dasar ML</div>
-                    </div>
-                    <div class="sug-card" onclick="useSuggestion('Bantu saya membuat rencana belajar pemrograman')">
-                        <span class="sug-icon">💻</span>
-                        <div class="sug-title">Rencana Belajar</div>
-                        <div class="sug-sub">Buat roadmap programming</div>
-                    </div>
-                    <div class="sug-card" onclick="useSuggestion('Rekomendasikan resep masakan sehat dan mudah')">
-                        <span class="sug-icon">🍳</span>
-                        <div class="sug-title">Ide Masakan</div>
-                        <div class="sug-sub">Resep sehat dan praktis</div>
-                    </div>
-                    <div class="sug-card" onclick="useSuggestion('Bagaimana cara meningkatkan produktivitas kerja?')">
-                        <span class="sug-icon">⚡</span>
-                        <div class="sug-title">Produktivitas</div>
-                        <div class="sug-sub">Tips kerja lebih efektif</div>
-                    </div>
-                </div>
-            </div>
-        `;
-        msgCount = 0;
-    }
+    function handleKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
+    function useSuggestion(text) { msgInput.value = text; sendMessage(); }
 </script>
+
 </body>
 </html>
