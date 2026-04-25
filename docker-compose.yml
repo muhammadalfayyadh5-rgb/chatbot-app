@@ -1,12 +1,12 @@
-version: '3.8'
-
 services:
   # Service Backend (Golang) - Milik Payad
   backend:
+    # Jika file backend ada di folder './backend', gunakan build. 
+    # Jika sudah di-push ke Docker Hub, biarkan baris image saja.
+    build: ./backend 
     image: muhammadalfayyadh/chatbot-backend:v1
     container_name: chatbot-backend
     environment:
-      # Mengambil nilai dari file .env secara otomatis
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       - GIN_MODE=release
     ports:
@@ -17,6 +17,8 @@ services:
 
   # Service Frontend (Nginx/Web) - Milik Kawan
   frontend:
+    # Tambahkan baris build di bawah ini sesuai folder frontend kawanmu
+    build: ./frontend 
     image: muhammadnabilfadhila/chatbot-frontend:v1.0
     container_name: chatbot-frontend
     ports:
