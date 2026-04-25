@@ -1,8 +1,6 @@
 services:
-  # Service Backend (Golang) - Milik Payad
+  # Service Backend (Golang)
   backend:
-    # Jika file backend ada di folder './backend', gunakan build. 
-    # Jika sudah di-push ke Docker Hub, biarkan baris image saja.
     build: ./server
     image: muhammadalfayyadh/chatbot-backend:v1
     container_name: chatbot-backend
@@ -15,9 +13,8 @@ services:
     networks:
       - chatbot-network
 
-  # Service Frontend (Nginx/Web) - Milik Kawan
+  # Service Frontend (Nginx/Web)
   frontend:
-    # Tambahkan baris build di bawah ini sesuai folder frontend kawanmu
     build: ./client 
     image: muhammadnabilfadhila/chatbot-frontend:v1.0
     container_name: chatbot-frontend
@@ -28,6 +25,9 @@ services:
     restart: always
     networks:
       - chatbot-network
+    # Menambahkan environment agar frontend tahu alamat backend (jika kodenya mendukung)
+    environment:
+      - BACKEND_URL=http://backend:8080
 
 networks:
   chatbot-network:
