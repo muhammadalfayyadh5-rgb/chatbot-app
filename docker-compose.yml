@@ -3,7 +3,7 @@ services:
   backend:
     # Jika file backend ada di folder './backend', gunakan build. 
     # Jika sudah di-push ke Docker Hub, biarkan baris image saja.
-    build: ./backend 
+    build: ./server
     image: muhammadalfayyadh/chatbot-backend:v1
     container_name: chatbot-backend
     environment:
@@ -18,7 +18,7 @@ services:
   # Service Frontend (Nginx/Web) - Milik Kawan
   frontend:
     # Tambahkan baris build di bawah ini sesuai folder frontend kawanmu
-    build: ./frontend 
+    build: ./client 
     image: muhammadnabilfadhila/chatbot-frontend:v1.0
     container_name: chatbot-frontend
     ports:
