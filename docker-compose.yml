@@ -1,11 +1,13 @@
 version: '3.8'
+
 services:
   # Service Backend (Golang) - Milik Payad
   backend:
-    image: muhammadalfayyadh/server
+    image: muhammadalfayyadh/chatbot-backend:v1
     container_name: chatbot-server
     environment:
-      - GEMINI_API_KEY=AIzaSyBScRrn0BvsSRZsdOGFNNft1YfI_28fCL8
+      # Mengambil nilai dari file .env secara otomatis
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
       - GIN_MODE=release
     ports:
       - "8080:8080"
@@ -15,11 +17,10 @@ services:
 
   # Service Frontend (Nginx/Web) - Milik Kawan
   frontend:
-    # GANTI 'akun_kawan' dengan username asli kawanmu di Docker Hub
     image: muhammadnabilfadhila/chatbot-client
     container_name: chatbot-client
     ports:
-      - "80:80"        # Akses via browser di http://localhost
+      - "80:80"
     depends_on:
       - backend
     restart: always

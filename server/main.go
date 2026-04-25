@@ -1,107 +1,50 @@
 package main
 
 import (
-	"bytes"
+	"context"
 	"encoding/json"
-	"fmt"
-	"io"
-	"log"
 	"net/http"
 	"os"
+	
+	"google.golang.org/genai"
 )
 
-type Request struct {
+type ChatRequest struct {
 	Message string `json:"message"`
 }
 
-type Response struct {
-	Reply string `json:"reply"`
-}
-
-// 🔥 Fungsi panggil Gemini API
-func callGeminiAPI(message string) (string, error) {
-	apiKey := os.Getenv("GEMINI_API_KEY")
-
-	url := fmt.Sprintf("https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=%s", apiKey)
-
-	body := map[string]interface{}{
-		"contents": []map[string]interface{}{
-			{
-				"parts": []map[string]string{
-					{"text": message},
-				},
-			},
-		},
-	}
-
-	jsonData, _ := json.Marshal(body)
-
-	resp, err := http.Post(url, "application/json", bytes.NewBuffer(jsonData))
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-
-	resBody, _ := io.ReadAll(resp.Body)
-
-	var result map[string]interface{}
-	json.Unmarshal(resBody, &result)
-
-	// 🔍 Ambil teks dari response Gemini
-	candidates := result["candidates"].([]interface{})
-	content := candidates[0].(map[string]interface{})["content"].(map[string]interface{})
-	parts := content["parts"].([]interface{})
-	text := parts[0].(map[string]interface{})["text"].(string)
-
-	return text, nil
-}
-
-func handler(w http.ResponseWriter, r *http.Request) {
-	// CORS
+func chatHandler(w http.ResponseWriter, r *http.Request) {
+	// PENTING: Izinkan frontend temanmu mengakses API ini
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
 	if r.Method == "OPTIONS" {
-		w.WriteHeader(http.StatusOK)
 		return
 	}
 
-	if r.Method != "POST" {
-		http.Error(w, "Method tidak diizinkan", http.StatusMethodNotAllowed)
-		return
+	// Ambil input dari frontend
+	var req ChatRequest
+	json.NewDecoder(r.Body).Decode(&req)
+
+	apiKey := os.Getenv("GEMINI_API_KEY")
+	ctx := context.Background()
+	client, err := genai.NewClient(ctx, &genai.ClientConfig{
+		APIKey: apiKey,
+	})
+
+	// Kirim pesan dari user ke Gemini
+	resp, err := client.Models.GenerateContent(ctx, "modeld/gemini2.5-flash-lite", genai.Text(req.Message), nil)
+	
+	botMessage := "Gagal mendapatkan respon."
+	if err == nil && len(resp.Candidates) > 0 {
+		botMessage = resp.Candidates[0].Content.Parts[0].Text
 	}
 
-	var req Request
-	err := json.NewDecoder(r.Body).Decode(&req)
-	if err != nil {
-		http.Error(w, "Request tidak valid", http.StatusBadRequest)
-		return
-	}
-
-	// 🔥 Panggil Gemini
-	reply, err := callGeminiAPI(req.Message)
-	if err != nil {
-		http.Error(w, "Gagal memanggil AI", http.StatusInternalServerError)
-		log.Println(err)
-		return
-	}
-
-	res := Response{Reply: reply}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(res)
-
-	log.Println("User:", req.Message)
-	log.Println("AI:", reply)
+	json.NewEncoder(w).Encode(map[string]string{"reply": botMessage})
 }
 
 func main() {
-	http.HandleFunc("/chat", handler)
-
-	log.Println("🚀 Server AI berjalan di port 8080...")
-	err := http.ListenAndServe(":8080", nil)
-	if err != nil {
-		log.Fatal(err)
-	}
+	http.HandleFunc("/chat", chatHandler)
+	http.ListenAndServe(":8080", nil)
 }

@@ -1,15 +1,37 @@
-FROM golang:1.22
+# Stage 1: Build (Gunakan versi yang lebih spesifik jika memungkinkan)
+FROM golang:alpine AS builder
 
-ENV GEMINI_API_KEY="AIzaSyBScRrn0BvsSRZsdOGFNNft1YfI_28fCL8"
+# Instal git dan build-base (terkadang diperlukan untuk beberapa module Go)
+RUN apk add --no-cache git
+
 WORKDIR /app
 
-COPY go.mod ./
+# Strategi Caching: Copy file modul dulu agar tidak download ulang tiap kali kode berubah
+COPY go.mod go.sum ./
 RUN go mod download
 
+# Baru copy semua source code
 COPY . .
 
-RUN go build -o server
+# Build dengan flag tambahan agar binary statis (aman di Alpine)
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
 
+# Stage 2: Deployment (Gunakan Alpine yang ringan)
+FROM alpine:latest  
+
+# Tambahkan sertifikat SSL agar backend bisa melakukan request HTTPS ke API Gemini
+RUN apk --no-cache add ca-certificates
+
+WORKDIR /root/
+
+# Salin binary dari stage builder
+COPY --from=builder /app/main .
+
+# Pastikan file binary punya akses eksekusi
+RUN chmod +x ./main
+
+# Port backend (sesuaikan dengan main.go kamu)
 EXPOSE 8080
 
-CMD ["./server"]
+# Jalankan aplikasi
+CMD ["./main"]
