@@ -1,13 +1,12 @@
 services:
   # Service Backend (Golang) - Milik Payad
   backend:
-    # Jika file backend ada di folder './backend', gunakan build. 
-    # Jika sudah di-push ke Docker Hub, biarkan baris image saja.
+  
     build: ./server
     image: muhammadalfayyadh/chatbot-backend:v1
     container_name: chatbot-backend
     environment:
-      - GEMINI_API_KEY= AIzaSyBP3BGRqqsP5wCxHYJFAfrMVKLEBfO7sH8
+      - GEMINI_API_KEY= AIzaSyDDDAwkuvifd1eAE_3HLAk-qDdAOvsKE2s
       - GIN_MODE=release
     ports:
       - "8080:8080"

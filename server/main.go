@@ -17,7 +17,7 @@ type ChatRequest struct {
 }
 
 func chatHandler(w http.ResponseWriter, r *http.Request) {
-	// 1. CORS Headers
+	// 1. CORS Headers - Sangat penting agar Frontend (port 80) bisa akses Backend (port 8080)
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
@@ -28,18 +28,19 @@ func chatHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 2. Decode Input
+	// 2. Decode Input dari Frontend
 	var req ChatRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		http.Error(w, "Request body tidak valid", http.StatusBadRequest)
 		return
 	}
 
-	// 3. Setup Gemini Client
+	// 3. Ambil API Key dari Environment Variable
 	apiKey := os.Getenv("GEMINI_API_KEY")
 	if apiKey == "" {
-		log.Println("Error: GEMINI_API_KEY is empty")
-		json.NewEncoder(w).Encode(map[string]string{"reply": "Server error: API Key is missing."})
+		log.Println("Error: Variable GEMINI_API_KEY tidak ditemukan!")
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"reply": "Server error: API Key belum dikonfigurasi."})
 		return
 	}
 
@@ -48,59 +49,56 @@ func chatHandler(w http.ResponseWriter, r *http.Request) {
 		APIKey: apiKey,
 	})
 	if err != nil {
-		log.Printf("Failed to create client: %v", err)
-		json.NewEncoder(w).Encode(map[string]string{"reply": "Gagal inisialisasi API."})
+		log.Printf("Gagal inisialisasi client: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"reply": "Gagal terhubung ke layanan AI."})
 		return
 	}
 
-	// ... (bagian atas tetap sama)
+	// 4. Generate Content (Penyebab Error 404 Sebelumnya)
+	// Di SDK ini, cukup tulis nama modelnya saja tanpa prefix "models/"
+	modelID := "gemini-2.5-flash-lite" // Pastikan model ini sudah tersedia di akun Anda
 
-	// 4. Generate Content 
-	// Coba gunakan prefix lengkap "models/" karena 404 biasanya karena jalur path yang salah
-	modelID := "models/gemini-1.5-flash" 
-	
 	resp, err := client.Models.GenerateContent(ctx, modelID, genai.Text(req.Message), nil)
-	
+
 	if err != nil {
-		log.Printf("Gemini Error: %v", err)
-		
-		// JIKA MASIH 404, kita paksa pakai model paling dasar
-		modelID = "models/gemini-pro"
-		resp, err = client.Models.GenerateContent(ctx, modelID, genai.Text(req.Message), nil)
-		
-		if err != nil {
-			json.NewEncoder(w).Encode(map[string]string{
-				"reply": fmt.Sprintf("Waduh, Google bilang: %v. Coba cek apakah API Key kamu sudah benar-benar aktif di AI Studio?", err),
-			})
-			return
+		log.Printf("Error Gemini: %v", err)
+		w.WriteHeader(http.StatusBadGateway)
+		// Memberikan info error yang lebih manusiawi di chat
+		json.NewEncoder(w).Encode(map[string]string{
+			"reply": fmt.Sprintf("Waduh, Google Gemini bilang: %v", err),
+		})
+		return
+	}
+
+	// 5. Parse Response - Ambil teks dari hasil AI
+	if resp == nil || len(resp.Candidates) == 0 || resp.Candidates[0].Content == nil {
+		json.NewEncoder(w).Encode(map[string]string{"reply": "Gemini tidak memberikan respon."})
+		return
+	}
+
+	var answer strings.Builder
+	for _, part := range resp.Candidates[0].Content.Parts {
+		if part.Text != "" {
+			answer.WriteString(part.Text)
 		}
 	}
 
-// ... (bagian bawah tetap sama)
-
-	// 5. Parse Response dengan cara yang lebih aman
-	botMessage := "Gemini tidak memberikan jawaban."
-	if len(resp.Candidates) > 0 && resp.Candidates[0].Content != nil {
-		// Menggabungkan semua part teks (jika ada lebih dari satu)
-		var pieces []string
-		for _, part := range resp.Candidates[0].Content.Parts {
-			if part.Text != "" {
-				pieces = append(pieces, part.Text)
-			}
-		}
-		if len(pieces) > 0 {
-			botMessage = strings.Join(pieces, " ")
-		}
+	botMessage := answer.String()
+	if botMessage == "" {
+		botMessage = "Maaf, jawaban tidak dapat diproses."
 	}
 
+	// Kirim balik ke Frontend
 	json.NewEncoder(w).Encode(map[string]string{"reply": botMessage})
 }
 
 func main() {
 	port := ":8080"
 	http.HandleFunc("/chat", chatHandler)
-	log.Printf("Backend chatbot aktif di port %s", port)
+	log.Printf("Backend AI Chatbot berjalan di port %s", port)
+
 	if err := http.ListenAndServe(port, nil); err != nil {
-		log.Fatal(err)
+		log.Fatal("Server gagal berjalan: ", err)
 	}
 }
